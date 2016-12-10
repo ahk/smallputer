@@ -1,3 +1,3 @@
 install:
-	mkdir -p ${HOME} && \
-	cp ./*.sh ${HOME}/.bin/
+	mkdir -p ${HOME}/bin && \
+	rsync -av --exclude='Makefile' --exclude='.git' ./ ${HOME}/bin/
