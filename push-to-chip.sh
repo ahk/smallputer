@@ -5,7 +5,7 @@ parse_args () {
   fi
 
   host=$1
-  user='pi'
+  user='chip'
   proj_name=${PWD##*/}
 }
 
