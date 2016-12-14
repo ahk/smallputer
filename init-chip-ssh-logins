@@ -13,15 +13,38 @@ parse_args () {
 
 main () {
   echo "registering this machine with chip host ..."
-  register_push $user $host $pass && \
+  # register_push $user $host $pass && \
   echo "registration complete."
+  
+  echo "setting up locales ..."
+  setup_locales
+  echo "locales complete."
 }
 
+# copy our ssh pub key to remote
 register_push () {
-expect <<- CMDS
-  spawn ssh-copy-id "$1@$2"
+expect <<-CMDS
+  spawn ssh-copy-id "$user@$host"
   expect "password:"
-  send "$3\n"
+  send "$pass\n"
+  expect eof
+CMDS
+}
+
+# setup locales on remote
+setup_locales () {
+expect <<-CMDS
+  spawn ssh -t "$user@$host" \
+    "sudo apt-get update && \
+    sudo apt-get install -y locales && \
+    locale-gen en_US en_US.UTF-8 && \
+    sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8"
+  expect "password for $user:"
+  send "$pass\n"
+  expect "password for $user:"
+  send "$pass\n"
+  expect "password for $user:"
+  send "$pass\n"
   expect eof
 CMDS
 }
